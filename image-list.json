@@ -1,0 +1,380 @@
+[
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "wsgi-stop",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.221648",
+        "trace_id": "4caabd9e-ed3f-4d88-9444-78b08fb07753"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-stop",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.445999",
+        "trace_id": "44e78418-9704-45f5-9fa0-938db5d43500"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu",
+            "request": {
+                "method": "POST",
+                "path": "/identity/v3/auth/tokens",
+                "query": "",
+                "scheme": "http"
+            }
+        },
+        "name": "wsgi-start",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.233531",
+        "trace_id": "f2494bbc-dfc5-4668-aae8-eaecae66eada"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "db": {
+                "params": {
+                    "owner_1": "f08892bffc45439498e64a2e6d4e5dac",
+                    "param_1": 25,
+                    "status_1": "active",
+                    "status_2": "saving",
+                    "status_3": "queued",
+                    "status_4": "pending_delete",
+                    "status_5": "deleted",
+                    "status_6": "deactivated",
+                    "status_7": "importing",
+                    "status_8": "uploading",
+                    "visibility_1": "community"
+                },
+                "statement": "SELECT anon_1.images_created_at AS anon_1_images_created_at, anon_1.images_updated_at AS anon_1_images_updated_at, anon_1.images_deleted_at AS anon_1_images_deleted_at, anon_1.images_deleted AS anon_1_images_deleted, anon_1.images_id AS anon_1_images_id, anon_1.images_name AS anon_1_images_name, anon_1.images_disk_format AS anon_1_images_disk_format, anon_1.images_container_format AS anon_1_images_container_format, anon_1.images_size AS anon_1_images_size, anon_1.images_virtual_size AS anon_1_images_virtual_size, anon_1.images_status AS anon_1_images_status, anon_1.images_visibility AS anon_1_images_visibility, anon_1.images_checksum AS anon_1_images_checksum, anon_1.images_min_disk AS anon_1_images_min_disk, anon_1.images_min_ram AS anon_1_images_min_ram, anon_1.images_owner AS anon_1_images_owner, anon_1.images_protected AS anon_1_images_protected, image_tags_1.created_at AS image_tags_1_created_at, image_tags_1.updated_at AS image_tags_1_updated_at, image_tags_1.deleted_at AS image_tags_1_deleted_at, image_tags_1.deleted AS image_tags_1_deleted, image_tags_1.id AS image_tags_1_id, image_tags_1.image_id AS image_tags_1_image_id, image_tags_1.value AS image_tags_1_value, image_properties_1.created_at AS image_properties_1_created_at, image_properties_1.updated_at AS image_properties_1_updated_at, image_properties_1.deleted_at AS image_properties_1_deleted_at, image_properties_1.deleted AS image_properties_1_deleted, image_properties_1.id AS image_properties_1_id, image_properties_1.image_id AS image_properties_1_image_id, image_properties_1.name AS image_properties_1_name, image_properties_1.value AS image_properties_1_value, image_locations_1.created_at AS image_locations_1_created_at, image_locations_1.updated_at AS image_locations_1_updated_at, image_locations_1.deleted_at AS image_locations_1_deleted_at, image_locations_1.deleted AS image_locations_1_deleted, image_locations_1.id AS image_locations_1_id, image_locations_1.image_id AS image_locations_1_image_id, image_locations_1.value AS image_locations_1_value, image_locations_1.meta_data AS image_locations_1_meta_data, image_locations_1.status AS image_locations_1_status \nFROM (SELECT images.created_at AS images_created_at, images.updated_at AS images_updated_at, images.deleted_at AS images_deleted_at, images.deleted AS images_deleted, images.id AS images_id, images.name AS images_name, images.disk_format AS images_disk_format, images.container_format AS images_container_format, images.size AS images_size, images.virtual_size AS images_virtual_size, images.status AS images_status, images.visibility AS images_visibility, images.checksum AS images_checksum, images.min_disk AS images_min_disk, images.min_ram AS images_min_ram, images.owner AS images_owner, images.protected AS images_protected \nFROM images \nWHERE images.deleted = false AND images.status IN (%(status_1)s, %(status_2)s, %(status_3)s, %(status_4)s, %(status_5)s, %(status_6)s, %(status_7)s, %(status_8)s) AND (images.owner = %(owner_1)s OR images.visibility != %(visibility_1)s) ORDER BY images.created_at DESC, images.id DESC \n LIMIT %(param_1)s) AS anon_1 LEFT OUTER JOIN image_tags AS image_tags_1 ON anon_1.images_id = image_tags_1.image_id LEFT OUTER JOIN image_properties AS image_properties_1 ON anon_1.images_id = image_properties_1.image_id LEFT OUTER JOIN image_locations AS image_locations_1 ON anon_1.images_id = image_locations_1.image_id ORDER BY anon_1.images_created_at DESC, anon_1.images_id DESC"
+            },
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-start",
+        "parent_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.430464",
+        "trace_id": "044a4abc-3b21-4488-9a18-6a8dac453e8b"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "db": {
+                "params": {},
+                "statement": "SELECT 1"
+            },
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-start",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.440507",
+        "trace_id": "a5e8613c-ba9d-4060-ab1c-37e307cef014"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "wsgi-stop",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.366938",
+        "trace_id": "f2494bbc-dfc5-4668-aae8-eaecae66eada"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu",
+            "request": {
+                "method": "GET",
+                "path": "/v2/images",
+                "query": "",
+                "scheme": "http"
+            }
+        },
+        "name": "wsgi-start",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.370919",
+        "trace_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu",
+            "request": {
+                "method": "GET",
+                "path": "/v2/images",
+                "query": "marker=5d246e0e-7a07-4519-9813-ca15a50d0896",
+                "scheme": "http"
+            }
+        },
+        "name": "wsgi-start",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.436641",
+        "trace_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "db": {
+                "params": {
+                    "owner_1": "f08892bffc45439498e64a2e6d4e5dac",
+                    "param_1": "2017-10-22T03:14:06.000000",
+                    "param_2": "2017-10-22T03:14:06.000000",
+                    "param_3": "",
+                    "param_4": "5d246e0e-7a07-4519-9813-ca15a50d0896",
+                    "param_5": 25,
+                    "status_1": "active",
+                    "status_2": "saving",
+                    "status_3": "queued",
+                    "status_4": "pending_delete",
+                    "status_5": "deleted",
+                    "status_6": "deactivated",
+                    "status_7": "importing",
+                    "status_8": "uploading",
+                    "visibility_1": "community"
+                },
+                "statement": "SELECT anon_1.images_created_at AS anon_1_images_created_at, anon_1.images_updated_at AS anon_1_images_updated_at, anon_1.images_deleted_at AS anon_1_images_deleted_at, anon_1.images_deleted AS anon_1_images_deleted, anon_1.images_id AS anon_1_images_id, anon_1.images_name AS anon_1_images_name, anon_1.images_disk_format AS anon_1_images_disk_format, anon_1.images_container_format AS anon_1_images_container_format, anon_1.images_size AS anon_1_images_size, anon_1.images_virtual_size AS anon_1_images_virtual_size, anon_1.images_status AS anon_1_images_status, anon_1.images_visibility AS anon_1_images_visibility, anon_1.images_checksum AS anon_1_images_checksum, anon_1.images_min_disk AS anon_1_images_min_disk, anon_1.images_min_ram AS anon_1_images_min_ram, anon_1.images_owner AS anon_1_images_owner, anon_1.images_protected AS anon_1_images_protected, image_tags_1.created_at AS image_tags_1_created_at, image_tags_1.updated_at AS image_tags_1_updated_at, image_tags_1.deleted_at AS image_tags_1_deleted_at, image_tags_1.deleted AS image_tags_1_deleted, image_tags_1.id AS image_tags_1_id, image_tags_1.image_id AS image_tags_1_image_id, image_tags_1.value AS image_tags_1_value, image_properties_1.created_at AS image_properties_1_created_at, image_properties_1.updated_at AS image_properties_1_updated_at, image_properties_1.deleted_at AS image_properties_1_deleted_at, image_properties_1.deleted AS image_properties_1_deleted, image_properties_1.id AS image_properties_1_id, image_properties_1.image_id AS image_properties_1_image_id, image_properties_1.name AS image_properties_1_name, image_properties_1.value AS image_properties_1_value, image_locations_1.created_at AS image_locations_1_created_at, image_locations_1.updated_at AS image_locations_1_updated_at, image_locations_1.deleted_at AS image_locations_1_deleted_at, image_locations_1.deleted AS image_locations_1_deleted, image_locations_1.id AS image_locations_1_id, image_locations_1.image_id AS image_locations_1_image_id, image_locations_1.value AS image_locations_1_value, image_locations_1.meta_data AS image_locations_1_meta_data, image_locations_1.status AS image_locations_1_status \nFROM (SELECT images.created_at AS images_created_at, images.updated_at AS images_updated_at, images.deleted_at AS images_deleted_at, images.deleted AS images_deleted, images.id AS images_id, images.name AS images_name, images.disk_format AS images_disk_format, images.container_format AS images_container_format, images.size AS images_size, images.virtual_size AS images_virtual_size, images.status AS images_status, images.visibility AS images_visibility, images.checksum AS images_checksum, images.min_disk AS images_min_disk, images.min_ram AS images_min_ram, images.owner AS images_owner, images.protected AS images_protected \nFROM images \nWHERE images.deleted = false AND images.status IN (%(status_1)s, %(status_2)s, %(status_3)s, %(status_4)s, %(status_5)s, %(status_6)s, %(status_7)s, %(status_8)s) AND (images.owner = %(owner_1)s OR images.visibility != %(visibility_1)s) AND (CASE WHEN (images.created_at IS NOT NULL) THEN images.created_at END < %(param_1)s OR CASE WHEN (images.created_at IS NOT NULL) THEN images.created_at END = %(param_2)s AND CASE WHEN (images.id IS NOT NULL) THEN images.id ELSE %(param_3)s END < %(param_4)s) ORDER BY images.created_at DESC, images.id DESC \n LIMIT %(param_5)s) AS anon_1 LEFT OUTER JOIN image_tags AS image_tags_1 ON anon_1.images_id = image_tags_1.image_id LEFT OUTER JOIN image_properties AS image_properties_1 ON anon_1.images_id = image_properties_1.image_id LEFT OUTER JOIN image_locations AS image_locations_1 ON anon_1.images_id = image_locations_1.image_id ORDER BY anon_1.images_created_at DESC, anon_1.images_id DESC"
+            },
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-start",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.447463",
+        "trace_id": "339c332e-7fc3-40f6-9697-ed64943923e0"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "wsgi-stop",
+        "parent_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.422670",
+        "trace_id": "ffd25b9f-3bbc-4ede-930c-6b758e2575e3"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "wsgi-stop",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.450048",
+        "trace_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "wsgi-stop",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.021744",
+        "trace_id": "d097f421-53bc-40e7-8499-30a9ebe131a2"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-stop",
+        "parent_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.428929",
+        "trace_id": "8fb8df87-2bbb-4fe7-a31f-7f14a2be85c1"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-stop",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.442610",
+        "trace_id": "aaa23d41-c157-4620-9615-af787010187c"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-stop",
+        "parent_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.431911",
+        "trace_id": "044a4abc-3b21-4488-9a18-6a8dac453e8b"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-stop",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.448748",
+        "trace_id": "339c332e-7fc3-40f6-9697-ed64943923e0"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-stop",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.440894",
+        "trace_id": "a5e8613c-ba9d-4060-ab1c-37e307cef014"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu",
+            "request": {
+                "method": "GET",
+                "path": "/identity/v3/auth/tokens",
+                "query": "",
+                "scheme": "http"
+            }
+        },
+        "name": "wsgi-start",
+        "parent_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.373170",
+        "trace_id": "ffd25b9f-3bbc-4ede-930c-6b758e2575e3"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu"
+        },
+        "name": "wsgi-stop",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.433520",
+        "trace_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu",
+            "request": {
+                "method": "GET",
+                "path": "/identity/",
+                "query": "",
+                "scheme": "http"
+            }
+        },
+        "name": "wsgi-start",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.019912",
+        "trace_id": "d097f421-53bc-40e7-8499-30a9ebe131a2"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "db": {
+                "params": {},
+                "statement": "SELECT 1"
+            },
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-start",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.445754",
+        "trace_id": "44e78418-9704-45f5-9fa0-938db5d43500"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "host": "tovin-ubuntu",
+            "request": {
+                "method": "POST",
+                "path": "/identity/v3/auth/tokens",
+                "query": "",
+                "scheme": "http"
+            }
+        },
+        "name": "wsgi-start",
+        "parent_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "project": "keystone",
+        "service": "main",
+        "timestamp": "2017-10-22T07:26:13.024268",
+        "trace_id": "4caabd9e-ed3f-4d88-9444-78b08fb07753"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "db": {
+                "params": {
+                    "id_1": "5d246e0e-7a07-4519-9813-ca15a50d0896"
+                },
+                "statement": "SELECT images.created_at AS images_created_at, images.updated_at AS images_updated_at, images.deleted_at AS images_deleted_at, images.deleted AS images_deleted, images.id AS images_id, images.name AS images_name, images.disk_format AS images_disk_format, images.container_format AS images_container_format, images.size AS images_size, images.virtual_size AS images_virtual_size, images.status AS images_status, images.visibility AS images_visibility, images.checksum AS images_checksum, images.min_disk AS images_min_disk, images.min_ram AS images_min_ram, images.owner AS images_owner, images.protected AS images_protected, image_properties_1.created_at AS image_properties_1_created_at, image_properties_1.updated_at AS image_properties_1_updated_at, image_properties_1.deleted_at AS image_properties_1_deleted_at, image_properties_1.deleted AS image_properties_1_deleted, image_properties_1.id AS image_properties_1_id, image_properties_1.image_id AS image_properties_1_image_id, image_properties_1.name AS image_properties_1_name, image_properties_1.value AS image_properties_1_value, image_locations_1.created_at AS image_locations_1_created_at, image_locations_1.updated_at AS image_locations_1_updated_at, image_locations_1.deleted_at AS image_locations_1_deleted_at, image_locations_1.deleted AS image_locations_1_deleted, image_locations_1.id AS image_locations_1_id, image_locations_1.image_id AS image_locations_1_image_id, image_locations_1.value AS image_locations_1_value, image_locations_1.meta_data AS image_locations_1_meta_data, image_locations_1.status AS image_locations_1_status \nFROM images LEFT OUTER JOIN image_properties AS image_properties_1 ON images.id = image_properties_1.image_id LEFT OUTER JOIN image_locations AS image_locations_1 ON images.id = image_locations_1.image_id \nWHERE images.id = %(id_1)s"
+            },
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-start",
+        "parent_id": "7afaa45c-fc2a-4e73-91ee-3458a9fdffa8",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.441625",
+        "trace_id": "aaa23d41-c157-4620-9615-af787010187c"
+    },
+    {
+        "base_id": "a4a8cdea-09cd-45a8-b875-d357d14151ef",
+        "info": {
+            "db": {
+                "params": {},
+                "statement": "SELECT 1"
+            },
+            "host": "tovin-ubuntu"
+        },
+        "name": "db-start",
+        "parent_id": "664b57d5-31d8-492b-bdb0-5af1b64696fc",
+        "project": "glance",
+        "service": "api",
+        "timestamp": "2017-10-22T07:26:13.428566",
+        "trace_id": "8fb8df87-2bbb-4fe7-a31f-7f14a2be85c1"
+    }
+]
