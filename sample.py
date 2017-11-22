@@ -110,41 +110,42 @@ def rearrange_tree(data):
         rearrange_tree(data['children'])
 
 # set class for nodes in tree
-class_data = {}
 
+queue = []
 
-def set_class(tree):
-    global class_data
+def put_queue(tree):
+    global queue
     if not tree:
         return
-    if not isinstance(tree, dict):
+    if isinstance(tree, list):
         for node in tree:
-            if node.get('name') == 'db':
-                class_data[node['trace_id']] = db.DB(node['project'], node['service'], node[
-                                                   'level'], node['trace_id'], node['parent_id'])
-            elif node.get('name') == 'wsgi':
-                class_data[node['trace_id']] = wsgi.WSGI(node['project'], node['service'], node[
-                                                    'level'], node['trace_id'], node['parent_id'])
+            queue.append(node)
             if node.get('children'):
-                set_class(node['children'])
+                put_queue(node['children'])
     else:
-        if not tree.get('name'):
-            class_data[tree['trace_id']] = base.Base(trace_id=tree['trace_id'], level=tree['level'])
-        elif tree.get('name') == 'db':
-            class_data[tree['trace_id']] = db.DB(tree['project'], tree['service'], tree[
-                                               'level'], tree['trace_id'], tree['parent_id'])
-        elif tree.get('name') == 'wsgi':
-            class_data[tree['trace_id']] = wsgi.WSGI(tree['project'], tree['service'], tree[
-                                                'level'], tree['trace_id'], tree['parent_id'])
-        set_class(tree['children'])
+        queue.append(tree)
+        if tree.get('children'):
+            put_queue(tree['children'])
+
+class_data = []
+
+def set_class(queue):
+    global class_data
+    for node in queue:
+        if not node.get('name'):
+            class_data.append(base.Base(trace_id=node['trace_id'], level=node['level']))
+        elif node.get('name') == 'db':
+            class_data.append(db.DB(node['project'], node['service'], node[
+                                                   'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'wsgi':
+            class_data.append(wsgi.WSGI(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
 
 #### put instances to instance.nodes
 
 def gather_instance(class_data):
-    for key in class_data:
-        node = class_data[key]
-        for k in class_data:
-            n = class_data[k]
+    for node in class_data:
+        for n in class_data:
             if n.parent_id == node.trace_id:
                 node.append(n)
 
@@ -155,7 +156,8 @@ span_data = make_span(better_data)
 tree = build_tree(span_data)
 add_depth(tree)
 rearrange_tree(tree)
-set_class(tree)
+put_queue(tree)
+set_class(queue)
 gather_instance(class_data)
 
 ##########################################################
@@ -214,14 +216,14 @@ def visualize_trace(tree):
             if tree.get('children'):
                 visualize_trace(tree['children'])
 
+
 print('1. Print signature')
 print('2. Visualize trace')
 decide = raw_input("Option: ")
 if int(decide) == 2:
     visualize_trace(tree)
 if int(decide) == 1:
-    for k in class_data:
-        obj = class_data[k]
+    for obj in class_data:
         if type(obj) == base.Base:
             obj.create_signature(obj.nodes)
             print('.'.join(obj.signature))
