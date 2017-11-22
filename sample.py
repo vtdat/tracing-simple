@@ -8,6 +8,7 @@ import wsgi
 import re
 import random
 import math
+import re
 
 with open('image-list.json') as data_file:
     fulldata = json.load(data_file)
@@ -216,16 +217,29 @@ def visualize_trace(tree):
             if tree.get('children'):
                 visualize_trace(tree['children'])
 
+def draw_tree(signature):
+    print('base')
+    for node in signature:
+        level = int(re.search(r'\d+', node).group())
+        for i in range(level):
+            print('\t', end='')
+        print(node)
+
 
 print('1. Print signature')
 print('2. Visualize trace')
+print('3. Draw tree')
 decide = raw_input("Option: ")
 if int(decide) == 2:
     visualize_trace(tree)
-if int(decide) == 1:
+elif int(decide) == 1:
     for obj in class_data:
         if type(obj) == base.Base:
             obj.create_signature(obj.nodes)
             print('.'.join(obj.signature))
-
+elif int(decide) == 3:
+    for obj in class_data:
+        if type(obj) == base.Base:
+            obj.create_signature(obj.nodes)
+            draw_tree(obj.signature)
 
