@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+from __future__ import print_function
 from pprint import pprint
 import json
 import base
@@ -7,6 +7,7 @@ import db
 import wsgi
 import re
 import random
+import math
 
 with open('image-list.json') as data_file:
     fulldata = json.load(data_file)
@@ -113,6 +114,7 @@ class_data = {}
 
 
 def set_class(tree):
+    global class_data
     if not tree:
         return
     if not isinstance(tree, dict):
@@ -155,12 +157,73 @@ add_depth(tree)
 rearrange_tree(tree)
 set_class(tree)
 gather_instance(class_data)
-class_data['a4a8cdea-09cd-45a8-b875-d357d14151ef'].create_signature(class_data['a4a8cdea-09cd-45a8-b875-d357d14151ef'].nodes)
-pprint(class_data['a4a8cdea-09cd-45a8-b875-d357d14151ef'].signature)
 
+##########################################################
 
+start = 999999999.99
+stop = 0.0
 
+def get_start_stop_time(tree):
+    global start, stop
+    if not tree:
+        return 
+    if isinstance(tree, list):
+        for node in tree:
 
+            get_start_stop_time(node)
+    else:
+        if not tree.get('starttime'):
+            get_start_stop_time(tree['children'])
+        else:
+            node_start = tree['starttime']
+            node_stop = tree['starttime'] + tree['time']
+            if start >= node_start:
+                start = node_start
+            if node_stop >= stop:
+                stop = node_stop
+            if tree.get('children'):
+                get_start_stop_time(tree['children'])
 
+get_start_stop_time(tree)
+
+maxrange = 150
+
+def visualize_trace(tree):
+    global start, stop
+    if not tree:
+        return
+    if isinstance(tree, list):
+        for node in tree:
+            visualize_trace(node)
+    else:
+        if not tree.get('time'):
+            print('%-8s' % 'base', end='')
+            print('[', end='')
+            for i in range(maxrange+1):
+                print('-', end = '')
+            print(']')
+            visualize_trace(tree['children'])
+        else:
+            print('%-8s' % (tree['name'] + str(tree['level'])), end='')
+            for i in range(int(math.ceil((tree['starttime'] - start) * maxrange / (stop - start)))):
+                print(' ', end = '')
+            print('[', end='')
+            for i in range(int(math.ceil(tree['time'] * maxrange / (stop - start)))):
+                print('-', end = '')
+            print(']')
+            if tree.get('children'):
+                visualize_trace(tree['children'])
+
+print('1. Print signature')
+print('2. Visualize trace')
+decide = raw_input("Option: ")
+if int(decide) == 2:
+    visualize_trace(tree)
+if int(decide) == 1:
+    for k in class_data:
+        obj = class_data[k]
+        if type(obj) == base.Base:
+            obj.create_signature(obj.nodes)
+            print('.'.join(obj.signature))
 
 
