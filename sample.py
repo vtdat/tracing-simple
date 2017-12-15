@@ -2,14 +2,23 @@ from __future__ import absolute_import
 from __future__ import print_function
 from pprint import pprint
 import json
-import base
-import db
-import wsgi
 import re
 import random
 import math
 import re
 import sys
+
+import base
+import db
+import wsgi
+import compute
+import driver
+import neutron
+import rpc
+import volume
+import vif_driver
+import stack
+import nova
 
 if len(sys.argv) != 2:
     print('Invalid command!\n\ttry again with: python sample.py [json file]')
@@ -145,6 +154,30 @@ def set_class(queue):
         elif node.get('name') == 'wsgi':
             class_data.append(wsgi.WSGI(node['project'], node['service'], node[
                                                 'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'compute_api':
+            class_data.append(compute.compute(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'rpc':
+            class_data.append(rpc.RPC(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'driver':
+            class_data.append(driver.driver(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'vif_driver':
+            class_data.append(vif_driver.vif(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'neutron_api':
+            class_data.append(neutron.neutron(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
+        elif node.get('name') == 'volume_api':
+            class_data.append(volume.volume(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id'])) 
+        elif node.get('name') == 'nova_image':
+            class_data.append(nova.nova(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))
+        else:
+            class_data.append(stack.stack(node['project'], node['service'], node[
+                                                'level'], node['trace_id'], node['parent_id']))    
 
 #### put instances to instance.nodes
 
