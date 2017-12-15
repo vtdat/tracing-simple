@@ -1,11 +1,13 @@
 class Base(object):
 
     def __init__(self, project=None, service=None,
-                 span_type=None, class_name=None, level = None, trace_id = None, parent_id = None):
+                 span_type=None, class_name=None, level = None, trace_id = None, parent_id = None, starttime = None, duration = None):
         self.trace_id = trace_id
         self.parent_id = parent_id
         self.project = project
         self.service = service
+        self.starttime = starttime
+        self.duration = duration
         self.span_type = span_type
         self.class_name = class_name
         self.level = level
