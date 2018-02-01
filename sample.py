@@ -5,8 +5,8 @@ import json
 import re
 import random
 import math
-import re
 import sys
+from datetime import datetime
 
 import base
 import db
@@ -19,6 +19,8 @@ import volume
 import vif_driver
 import stack
 import nova
+
+timefmt = '%Y-%m-%dT%H:%M:%S.%f'
 
 if len(sys.argv) != 2:
     print('Invalid command!\n\ttry again with: python sample.py [json file]')
@@ -49,29 +51,31 @@ def make_prettier_data(cleaned_data):
 
 # make span from prettier data
 
+def msec(dt):
+    microsec = (dt.microsecond + (dt.second + dt.day * 24 * 3600) * 1e6)
+    return int(microsec / 1000.0)
 
 def make_span(prettier_data):
     span_data = {}
     for k in prettier_data:
         nodes = prettier_data[k]
         span_data.setdefault(k, {})
-        if 'start' in nodes[0]['name']:
-            span_data[k]['starttime'] = float(nodes[0]['timestamp'].rsplit(
-                ':', 2)[2]) + float(nodes[0]['timestamp'].rsplit(':', 2)[1]) * 60
+
+        if nodes[0]['name'].endswith('start'):
+            span_data[k]['starttime'] = msec(datetime.strptime(nodes[0]['timestamp'], timefmt))
+            span_data[k]['finishtime'] = msec(datetime.strptime(nodes[1]['timestamp'], timefmt))
         else:
-            span_data[k]['starttime'] = float(nodes[1]['timestamp'].rsplit(
-                ':', 2)[2]) + float(nodes[1]['timestamp'].rsplit(':', 2)[1]) * 60
+            span_data[k]['starttime'] = msec(datetime.strptime(nodes[1]['timestamp'], timefmt))
+            span_data[k]['finishtime'] = msec(datetime.strptime(nodes[0]['timestamp'], timefmt))
+
         span_data[k]['base_id'] = nodes[0]['base_id']
         span_data[k]['trace_id'] = nodes[0]['trace_id']
         span_data[k]['project'] = nodes[0]['project']
-        span_data[k]['name'] = re.sub(
-            '-start', '', re.sub('-stop', '', nodes[0]['name']))
+        span_data[k]['name'] = nodes[0]['name'].split('-')[0]
         span_data[k]['parent_id'] = nodes[0]['parent_id']
         span_data[k]['service'] = nodes[0]['service']
-        span_data[k]['time'] = abs(float(nodes[0]['timestamp'].rsplit(':', 2)[2])
-                                   + float(nodes[0]['timestamp'].rsplit(':', 2)[1]) * 60
-                                   - float(nodes[1]['timestamp'].rsplit(':', 2)[2])
-                                   - float(nodes[1]['timestamp'].rsplit(':', 2)[1]) * 60)
+        span_data[k]['time'] = span_data[k]['finishtime'] - span_data[k]['starttime']
+        
     return span_data
 
 # build tree from data
@@ -209,14 +213,13 @@ def get_start_stop_time(tree):
         return 
     if isinstance(tree, list):
         for node in tree:
-
             get_start_stop_time(node)
     else:
-        if not tree.get('starttime'):
+        if not tree.get('name'):
             get_start_stop_time(tree['children'])
         else:
             node_start = tree['starttime']
-            node_stop = tree['starttime'] + tree['time']
+            node_stop = tree['finishtime']
             if start >= node_start:
                 start = node_start
             if node_stop >= stop:
@@ -236,15 +239,15 @@ def visualize_trace(tree):
         for node in tree:
             visualize_trace(node)
     else:
-        if not tree.get('time'):
-            print('%-8s' % 'base', end='')
+        if not tree.get('name'):
+            print('%-20s' % 'base', end='')
             print('[', end='')
-            for i in range(maxrange+1):
+            for i in range(maxrange + 1):
                 print('-', end = '')
             print(']')
             visualize_trace(tree['children'])
         else:
-            print('%-8s' % (tree['name'] + str(tree['level'])), end='')
+            print('%-20s' % (tree['name'] + str(tree['level'])), end='')
             for i in range(int(math.ceil((tree['starttime'] - start) * maxrange / (stop - start)))):
                 print(' ', end = '')
             print('[', end='')
