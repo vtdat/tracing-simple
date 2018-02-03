@@ -30,9 +30,13 @@ with open(sys.argv[1]) as data_file:
 
 # remove 'info' key and value
 
+info_data = {}
 
 def clean_data(data):
+    global info_data
     for k in data:
+        if k['name'].endswith('start'):
+            info_data[k['trace_id']] = k['info']
         del k['info']
     return data
 
@@ -55,6 +59,8 @@ def msec(dt):
     microsec = (dt.microsecond + (dt.second + dt.day * 24 * 3600) * 1e6)
     return int(microsec / 1000.0)
 
+
+
 def make_span(prettier_data):
     span_data = {}
     for k in prettier_data:
@@ -64,9 +70,11 @@ def make_span(prettier_data):
         if nodes[0]['name'].endswith('start'):
             span_data[k]['starttime'] = msec(datetime.strptime(nodes[0]['timestamp'], timefmt))
             span_data[k]['finishtime'] = msec(datetime.strptime(nodes[1]['timestamp'], timefmt))
+            span_data[k]['timestamp'] = nodes[0]['timestamp']
         else:
             span_data[k]['starttime'] = msec(datetime.strptime(nodes[1]['timestamp'], timefmt))
             span_data[k]['finishtime'] = msec(datetime.strptime(nodes[0]['timestamp'], timefmt))
+            span_data[k]['timestamp'] = nodes[1]['timestamp']
 
         span_data[k]['base_id'] = nodes[0]['base_id']
         span_data[k]['trace_id'] = nodes[0]['trace_id']
@@ -266,10 +274,80 @@ def draw_tree(signature):
             print('----', end='')
         print(node)
 
+info_extract = {}
+data_extract = {}
+
+def generate_processed_data():
+    i = []
+    dt = []
+    root = []
+    global info_extract, data_extract
+
+    for obj in class_data:
+        if type(obj) == base.Base:
+            obj.create_signature(obj.nodes)
+            signature = '.'.join(obj.signature)
+            obj.return_children(root, obj.nodes)
+    for node in root:
+        for d in info_data:
+            if node.trace_id == d:
+                i.append(info_data[d])
+        for d in span_data:  
+            if node.trace_id == span_data[d]['trace_id']:
+                tmp = {
+                    'name' : node.class_name,
+                    'service' : node.service,
+                    'project' : node.project,
+                    'starttime' : span_data[d]['timestamp'],
+                    'duration' : node.duration,
+                    'parent_id' : node.parent_id,
+                    'base_id' : span_data[d]['base_id']
+                }
+                dt.append(tmp)
+    info_extract[signature] = i
+    data_extract[signature] = dt
+    with open('_'.join([sys.argv[1].split('.')[0], 'info.json']), 'w+') as info:
+        json.dump(info_extract, info, indent=4)
+    with open('_'.join([sys.argv[1].split('.')[0], 'data.json']), 'w+') as data:
+        json.dump(data_extract, data, indent=4)
+
+sub = {}
+
+def create_subworkflow():
+    global sub
+    subcount = 0
+    for obj in class_data:
+        obj.create_signature(obj.nodes)
+        for i in xrange(3, 10):
+            flag = 0
+            if len(obj.signature) == i:
+                substring = ''.join(i for i in '.'.join(obj.signature) if not i.isdigit())
+                for k, v in sub.iteritems():
+                    if substring == v:
+                        flag = 1
+                if flag == 0:
+                    sub[subcount] = substring
+                    subcount = subcount + 1
+    with open('_'.join([sys.argv[1].split('.')[0], 'sub.json']), 'w+') as subfile:
+        json.dump(sub, subfile, indent = 4)
+
+def replace_subworkflow():
+    for obj in class_data:
+        if type(obj) == base.Base:
+            obj.create_signature(obj.nodes)
+            signature = ''.join(i for i in '.'.join(obj.signature) if not i.isdigit())
+    for k, v in sub.iteritems():
+        signature = signature.replace(v, 'sub' + str(k))
+        
+    pprint(signature)
+
+
 while(1):
     print('\n\n1. Print signature')
     print('2. Visualize trace')
     print('3. Draw tree')
+    print('4. Extract files')
+    print('5. Signature after combining workflow')
     decide = raw_input("Option: ")
     if int(decide) == 2:
         visualize_trace(tree)
@@ -283,4 +361,11 @@ while(1):
             if type(obj) == base.Base:
                 obj.create_signature(obj.nodes)
                 draw_tree(obj.signature)
+    elif int(decide) == 4:
+        generate_processed_data()
+    elif int(decide) == 5:
+        create_subworkflow()
+        replace_subworkflow()
+    else:
+        exit()
 

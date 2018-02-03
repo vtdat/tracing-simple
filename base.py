@@ -26,3 +26,10 @@ class Base(object):
         for node in nodes:
             self.signature.append(node.class_name + str(node.level))
             self.create_signature(node.nodes)
+
+    def return_children(self, children, nodes):
+        if not nodes:
+            return children
+        for node in nodes:
+            children.append(node)
+            self.return_children(children, node.nodes)
